@@ -47,7 +47,7 @@ async function main() {
             }
         } else {
             // just copy over
-            exec.exec('robocopy.exe', ['.', destination, '/E'])
+            await exec.exec('robocopy.exe', ['.', destination, '/E'])
             console.log('COPY OVER')
         }
         core.setOutput("dest", destination)
