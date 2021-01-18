@@ -11,7 +11,7 @@ async function main() {
         if (fs.existsSync(destination)) {
             // get destination repo url
             const repo = git(destination)
-            const url = (await repo.listConfig).values['.git/config']['remote.origin.url']
+            const url = (await repo.listConfig()).values['.git/config']['remote.origin.url']
 
             // mirror only if identical git repo
             if (url===github.context.payload.repository.ssh_url) {
