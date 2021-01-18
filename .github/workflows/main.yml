@@ -11,7 +11,7 @@ jobs:
       id: hello
       uses: ./
       with:
-        destination: 'c:\iisnode\test'
+        destination: d:/iisnode/find
     # Use the output from the `hello` step
     - name: Get the output time
       run: echo "The time was ${{ steps.hello.outputs.dest }}"
