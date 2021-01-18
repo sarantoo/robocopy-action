@@ -21,6 +21,10 @@ async function main() {
                     dest: url
                 })
             } else {
+                console.dir({
+                    src: github.context.payload.repository.ssh_url,
+                    dest: url
+                })
                 core.setFailed('INVALID DESTINATION')
             }
         } else {
