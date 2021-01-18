@@ -21,10 +21,10 @@ async function main() {
             const url = (await repo.listConfig()).values['.git/config']['remote.origin.url']
 
             // mirror only if identical git repo
-            if (url===github.context.payload.repository.ssh_url) {
+            if (url===github.context.payload.repository.url) {
                 // exec.exec('robocopy.exe', ['.', destination, '/MIR'])
                 console.dir({
-                    src: github.context.payload.repository.ssh_url,
+                    src: github.context.payload.repository.url,
                     dest: url
                 })
             } else {
