@@ -1,0 +1,13 @@
+name: 'Robocopy'
+description: 'Safely mirror project on IIS using Robocopy'
+inputs:
+  destination:  # id of input
+    description: 'Destination directory'
+    required: true
+    default: ''
+outputs:
+  time: # id of output
+    description: 'The time we greeted you'
+runs:
+  using: 'node12'
+  main: 'index.js'
