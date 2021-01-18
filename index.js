@@ -1,10 +1,15 @@
 const core = require('@actions/core')
 const github = require('@actions/github')
-const git = require('simple-git')
 
 async function main() {
-    const destination = core.getInput('destination')
-
+    try {
+        const destination = core.getInput('destination')
+        core.setOutput("dest", destination)
+        const payload = JSON.stringify(github.context.payload, undefined, 2)
+        console.log(`The event payload: ${payload}`);
+    } catch(error) {
+        core.setFailed(error.message)
+    }
 }
 
 main()
