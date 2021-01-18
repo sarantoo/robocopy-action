@@ -8,7 +8,7 @@ async function main() {
     try {
         const destination = core.getInput('destination')
         // check if destination exists
-        if (fs.existsSync(destination)) {
+        if (!fs.existsSync(destination)) {
             // get destination repo url
             const repo = git(destination)
             const url = (await repo.listConfig).values['.git/config']['remote.origin.url']
