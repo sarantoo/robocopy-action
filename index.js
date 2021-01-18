@@ -9,9 +9,6 @@ async function main() {
         // check if destination exists
         if (fs.existsSync(destination)) {
             // get destination repo url
-            // const repo = git(destination)
-            // const url = (await repo.listConfig()).values['.git/config']['remote.origin.url']
-
             let url = '';
             let error = '';
 
@@ -32,12 +29,8 @@ async function main() {
 
             // mirror only if identical git repo
             if (url===github.context.payload.repository.url) {
-                console.log('MIRROR')
-                // exec.exec('robocopy.exe', ['.', destination, '/MIR', '/L'])
-                // console.dir({
-                //     src: github.context.payload.repository.url,
-                //     dest: url
-                // })
+                exec.exec('robocopy.exe', ['.', destination, '/MIR'])
+                console.log('MIRRORED')
             } else {
                 console.dir({
                     src: github.context.payload.repository.url,
@@ -47,7 +40,7 @@ async function main() {
             }
         } else {
             // just copy over
-            // exec.exec('robocopy.exe', ['.', destination, '/E'])
+            exec.exec('robocopy.exe', ['.', destination, '/E'])
             console.log('COPY OVER')
         }
         core.setOutput("dest", destination)
