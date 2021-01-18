@@ -2,7 +2,6 @@ const fs = require('fs')
 const core = require('@actions/core')
 const github = require('@actions/github')
 const exec = require('@actions/exec')
-const git = require('simple-git')
 
 async function main() {
     try {
@@ -19,7 +18,7 @@ async function main() {
             const options = {};
             options.listeners = {
                 stdout: (data) => {
-                    url += data.toString();
+                    url += data.toString().trim();
                 },
                 stderr: (data) => {
                     error += data.toString();
