@@ -29,15 +29,18 @@ async function main() {
         const destination = core.getInput('destination')
         // check if destination exists
         if (fs.existsSync(destination)) {
+            // get local repo url
+            let src = await execWithOutput('git config --local --get remote.origin.url')
+
             // get destination repo url
-            let result = await execWithOutput('git config --local --get remote.origin.url', undefined, destination)
+            let dst = await execWithOutput('git config --local --get remote.origin.url', undefined, destination)
             let url = result.output.trim()
             console.log("DESTINATION REPO", url)
 
             // mirror only if identical git repo
-            if (url === github.context.payload.repository.url) {
+            if (src.output.trim() === dst.output.trim()) {
                 // and working tree is clean
-                result = await execWithOutput('git status --short', undefined, destination)
+                let result = await execWithOutput('git status --short', undefined, destination)
 
                 if (result.output.trim() === '') {
                     result = await execWithOutput('robocopy.exe', ['.', destination, '/MIR'])
