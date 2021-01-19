@@ -36,7 +36,7 @@ async function main() {
 
             // mirror only if identical git repo
             if (url===github.context.payload.repository.url) {
-                exec.exec('robocopy.exe', ['.', destination, '/MIR'])
+                await exec.exec('robocopy.exe', ['.', destination, '/MIR'])
                 console.log('MIRRORED')
             } else {
                 console.dir({
@@ -51,8 +51,8 @@ async function main() {
             console.log('COPY OVER')
         }
         core.setOutput("dest", destination)
-        // const payload = JSON.stringify(github.context.payload, undefined, 2)
-        // console.log(`The event payload: ${payload}`);
+        const payload = JSON.stringify(github.context, undefined, 2)
+        console.log(`The event payload: ${payload}`);
     } catch(error) {
         core.setFailed(error.message)
     }
