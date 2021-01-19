@@ -11,6 +11,7 @@ async function main() {
             // get destination repo url
             let url = '';
             let error = '';
+            let exitCode = 0;
 
             const options = {};
             options.listeners = {
@@ -29,7 +30,13 @@ async function main() {
 
             // mirror only if identical git repo
             if (url===github.context.payload.repository.url) {
-                await exec.exec('robocopy.exe', ['.', destination, '/MIR'])
+                try {
+                    exitCode = await exec.exec('robocopy.exe', ['.', destination, '/MIR'])
+                } catch (error) {
+                    if (exitCode >= 8) {
+                        core.setFailed(error.message)
+                    }
+                }
                 console.log('MIRRORED')
             } else {
                 console.dir({
