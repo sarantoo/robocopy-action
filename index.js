@@ -14,6 +14,7 @@ async function execWithOutput(cmd, args, cwd) {
     try {
         result.exitCode = await exec.exec(cmd, args, options)
     } catch (error) {
+        console.log('ERROR CAPTURED', result)
         if (/robocopy/i.test(cmd) && result.exitCode < 8) {
             // suppress error if robocopy exit with code < 8
             console.log('HEY')
