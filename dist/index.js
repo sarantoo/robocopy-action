@@ -19,12 +19,15 @@ async function execWithOutput(cmd, args, cwd) {
     }
     if (cwd) options.cwd = cwd
     try {
-        result.exitCode = await exec.exec(cmd, args, options)
+        await exec.exec(cmd, args, options)
     } catch (error) {
-        console.log('ERROR CAPTURED', result)
-        if (/robocopy/i.test(cmd) && result.exitCode < 8) {
-            // suppress error if robocopy exit with code < 8
-            console.log('HEY')
+        console.log('ERROR CAPTURED', error)
+        // we did't get exit code here as it was intercepted by node
+        // manually extract exit code from error.message
+        let exitCode = error.message.split(' ').slice(-1)
+        // suppress error if robocopy exit with code < 8
+        if (/robocopy/i.test(cmd) && Number(exitCode) < 8) {
+            console.log('ROBOCOPY EXIT CODE', exitCode)
         } else {
             throw new Error(`${error.message} ${result.error}`)
         }
