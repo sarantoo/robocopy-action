@@ -24,7 +24,7 @@ async function execWithOutput(cmd, args, cwd) {
         console.log('ERROR CAPTURED', error)
         // we did't get exit code here as it was intercepted by node
         // manually extract exit code from error.message
-        let exitCode = error.message.split(' ').slice(-1)[0]
+        let exitCode = error.message.match(/exit code (\d+)/i)[1]
         // suppress error if robocopy exit with code < 8
         if (/robocopy/i.test(cmd) && Number(exitCode) < 8) {
             console.log('ROBOCOPY EXIT CODE', exitCode)
