@@ -41,7 +41,7 @@ async function main() {
 
             // get destination repo url
             let dst = await execWithOutput('git config --local --get remote.origin.url', undefined, destination)
-            let url = result.output.trim()
+            let url = dst.output.trim()
             console.log("DESTINATION REPO", url)
 
             // mirror only if identical git repo
