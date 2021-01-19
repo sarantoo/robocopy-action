@@ -1,6 +1,6 @@
 const fs = require('fs')
 const core = require('@actions/core')
-const github = require('@actions/github')
+// const github = require('@actions/github')
 const exec = require('@actions/exec')
 
 async function execWithOutput(cmd, args, cwd) {
@@ -17,12 +17,12 @@ async function execWithOutput(cmd, args, cwd) {
         console.log('ERROR CAPTURED', error)
         // we did't get exit code here as it was intercepted by node
         // manually extract exit code from error.message
-        let exitCode = error.message.split(' ').slice(-1)
+        let exitCode = error.message.split(' ').slice(-1)[0]
         // suppress error if robocopy exit with code < 8
         if (/robocopy/i.test(cmd) && Number(exitCode) < 8) {
             console.log('ROBOCOPY EXIT CODE', exitCode)
         } else {
-            throw new Error(`${error.message} ${result.error}`)
+            throw new Error(error.message)
         }
     }
     return result
@@ -44,7 +44,7 @@ async function main() {
             // mirror only if identical git repo
             if (src.output.trim() === dst.output.trim()) {
                 // and working tree is clean
-                let result = await execWithOutput('git status --short', undefined, destination)
+                let result = await execWithOutput('git diff', undefined, destination)
 
                 if (result.output.trim() === '') {
                     result = await execWithOutput('robocopy.exe', ['.', destination, '/MIR'])
@@ -55,7 +55,7 @@ async function main() {
                 }
             } else {
                 console.dir({
-                    src: github.context.payload.repository.url,
+                    src: src.output,
                     dest: url
                 })
                 core.setFailed('INVALID DESTINATION')
@@ -67,8 +67,8 @@ async function main() {
             console.log('COPY OVER')
         }
         core.setOutput("dest", destination)
-        const payload = JSON.stringify(github.context.payload, undefined, 2)
-        console.log(`The event payload: ${payload}`);
+        // const payload = JSON.stringify(github.context.payload, undefined, 2)
+        // console.log(`The event payload: ${payload}`);
     } catch(error) {
         core.setFailed(error.message)
     }
