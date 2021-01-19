@@ -1,6 +1,7 @@
 const fs = require('fs')
 const core = require('@actions/core')
 const exec = require('@actions/exec')
+const isEmpty = require('empty-dir')
 
 async function execWithOutput(cmd, args, cwd) {
     const options = {}
@@ -30,8 +31,8 @@ async function execWithOutput(cmd, args, cwd) {
 async function main() {
     try {
         const destination = core.getInput('destination')
-        // check if destination exists
-        if (fs.existsSync(destination)) {
+        // check if destination exists and not empty
+        if (fs.existsSync(destination) && !isEmpty(destination)) {
             // get local repo url
             let src = await execWithOutput('git config --local --get remote.origin.url')
 

@@ -8,6 +8,7 @@ module.exports =
 const fs = __nccwpck_require__(747)
 const core = __nccwpck_require__(916)
 const exec = __nccwpck_require__(716)
+const isEmpty = __nccwpck_require__(796)
 
 async function execWithOutput(cmd, args, cwd) {
     const options = {}
@@ -37,8 +38,8 @@ async function execWithOutput(cmd, args, cwd) {
 async function main() {
     try {
         const destination = core.getInput('destination')
-        // check if destination exists
-        if (fs.existsSync(destination)) {
+        // check if destination exists and not empty
+        if (fs.existsSync(destination) && !isEmpty(destination)) {
             // get local repo url
             let src = await execWithOutput('git config --local --get remote.origin.url')
 
@@ -1627,6 +1628,126 @@ function copyFile(srcFile, destFile, force) {
     });
 }
 //# sourceMappingURL=io.js.map
+
+/***/ }),
+
+/***/ 796:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
+
+"use strict";
+
+
+var fs = __nccwpck_require__(747);
+
+function emptyDir(dir, filter, cb) {
+  if (arguments.length === 2) {
+    cb = filter;
+    filter = null;
+  }
+
+  if (cb && typeof cb !== 'function') {
+    throw new TypeError('expected callback to be a function');
+  }
+
+  if (!Array.isArray(dir) && typeof dir !== 'string') {
+    throw new TypeError('expected a directory or array of files');
+  }
+
+  var p = new Promise(function(resolve, reject) {
+    if (Array.isArray(dir)) {
+      return resolve(isEmpty(dir, filter));
+    }
+
+    fs.stat(dir, function(err, stat) {
+      if (err || !stat.isDirectory()) {
+        return resolve(false);
+      }
+
+      fs.readdir(dir, function(err, files) {
+        if (err) {
+          return reject(err);
+        }
+
+        resolve(isEmpty(files, filter));
+      });
+    });
+  });
+
+  if (cb) {
+    p.then(function(result) {
+      cb(null, result);
+    }).catch(cb);
+    return;
+  }
+
+  return p;
+}
+
+/**
+ * Return true if the given `files` array has zero length or only
+ * includes unwanted files.
+ */
+
+function emptyDirSync(dir, filter) {
+  if (Array.isArray(dir)) {
+    return isEmpty(dir, filter);
+  }
+
+  if (typeof dir !== 'string') {
+    throw new TypeError('expected a directory or array of files');
+  }
+
+  if (!isDirectory(dir)) {
+    return false;
+  }
+
+  var files = fs.readdirSync(dir);
+  return isEmpty(files, filter);
+}
+
+/**
+ * Returns true if the given "files" array is empty or only
+ * contains unwanted files.
+ */
+
+function isEmpty(files, filter) {
+  if (files.length === 0) {
+    return true;
+  }
+
+  if (typeof filter !== 'function') {
+    return false;
+  }
+
+  for (var i = 0; i < files.length; ++i) {
+    if (filter(files[i]) === false) {
+      return false;
+    }
+  }
+  return true;
+}
+
+/**
+ * Returns true if the filepath exists and is a directory
+ */
+
+function isDirectory(filepath) {
+  try {
+    return fs.statSync(filepath).isDirectory();
+  } catch (err) {
+    // Ignore error
+  }
+  return false;
+}
+
+/**
+ * Expose `emptyDir`
+ */
+
+module.exports = emptyDir;
+module.exports.sync = emptyDirSync;
+module.exports.isEmpty = isEmpty;
+
 
 /***/ }),
 
