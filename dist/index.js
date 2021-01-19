@@ -7,7 +7,6 @@ module.exports =
 
 const fs = __nccwpck_require__(747)
 const core = __nccwpck_require__(916)
-// const github = require('@actions/github')
 const exec = __nccwpck_require__(716)
 
 async function execWithOutput(cmd, args, cwd) {
@@ -70,12 +69,8 @@ async function main() {
         } else {
             // just copy over
             await execWithOutput('robocopy.exe', ['.', destination, '/E'])
-            // await exec.exec('robocopy.exe', ['.', destination, '/E'])
-            console.log('COPY OVER')
+            console.log('DIRECTORY CREATED')
         }
-        core.setOutput("dest", destination)
-        // const payload = JSON.stringify(github.context.payload, undefined, 2)
-        // console.log(`The event payload: ${payload}`);
     } catch(error) {
         core.setFailed(error.message)
     }
